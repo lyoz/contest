@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include <omp.h>
 using namespace std;
 
 #define dump(...) cout<<"# "<<#__VA_ARGS__<<'='<<(__VA_ARGS__)<<endl
@@ -72,7 +73,12 @@ int main()
 	rep(i,T) solvers[i].input();
 	
 	vector<string> results(T);
+	#ifndef _OPENMP
+	fputs("------- run with single thread -------\n",stderr);
+	#else
+	fprintf(stderr,"------- run with %d threads -------\n",omp_get_max_threads());
 	#pragma omp parallel for schedule(dynamic)
+	#endif
 	rep(i,T){
 		results[i]=solvers[i].solve();
 		fprintf(stderr,"#%d finish\n",i+1);
