@@ -4,9 +4,11 @@ FILE=$(MAIN)-sample
 #FILE=$(MAIN)-small-attempt0
 #FILE=$(MAIN)-small-attempt1
 #FILE=$(MAIN)-large
+#FILE=$(MAIN)-small-practice
+#FILE=$(MAIN)-large-practice
 
 CXXFLAGS=-std=c++14 -Wall -Wextra -Wno-sign-compare -Wno-unused-result -g -D_GLIBCXX_DEBUG
-#CXXFLAGS=-std=c++14 -Wall -Wextra -Wno-sign-compare -Wno-unused-result -O2
+#CXXFLAGS=-std=c++14 -Wall -Wextra -Wno-sign-compare -Wno-unused-result -O2 -fopenmp
 
 all: $(MAIN)
 clean:

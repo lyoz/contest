@@ -51,15 +51,32 @@ constexpr int INF=1e9;
 constexpr int MOD=1e9+7;
 constexpr double EPS=1e-9;
 
-void solve()
+struct Solver{
+	void input();
+	string solve();
+};
+
+void Solver::input()
 {
+}
+
+string Solver::solve()
+{
+	return "";
 }
 
 int main()
 {
 	int T; cin>>T;
+	vector<Solver> solvers(T);
+	rep(i,T) solvers[i].input();
+	
+	vector<string> results(T);
+	#pragma omp parallel for schedule(dynamic)
 	rep(i,T){
-		cout<<"Case #"<<i+1<<": ";
-		solve();
+		results[i]=solvers[i].solve();
+		fprintf(stderr,"#%d finish\n",i+1);
 	}
+	
+	rep(i,T) printf("Case #%d: %s\n",i+1,results[i].c_str());
 }
