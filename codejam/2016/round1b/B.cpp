@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include <omp.h>
 using namespace std;
 
 #define dump(...) cout<<"# "<<#__VA_ARGS__<<'='<<(__VA_ARGS__)<<endl
@@ -47,7 +48,7 @@ basic_ostream<Ch,Tr>& operator<<(basic_ostream<Ch,Tr>& os,const C& c){
 	return os<<']';
 }
 
-constexpr int INF=1e9;
+//constexpr int INF=1e9;
 constexpr int MOD=1e9+7;
 constexpr double EPS=1e-9;
 
@@ -63,92 +64,53 @@ void Solver::input()
 	b.reserve(1); cin>>b;
 }
 
-void calc_min_max(string s,vl& mn,vl& mx)
+constexpr ll INF=1ll<<61;
+const tuple<ll,string,string> TINF=make_tuple(INF,"","");
+
+auto calc(string a,string b,int i)
 {
-	int n=s.size();
-	string t=s;
-	replace(all(s),'?','0');
-	rep(i,n) mn[i]=stoll(s.substr(n-1-i));
-	replace(all(t),'?','9');
-	rep(i,n) mx[i]=stoll(t.substr(n-1-i));
+	int n=a.size();
+	rep(j,i+1) if(a[i]>b[i]) return TINF;
+	repi(j,i+1,n) if(a[j]=='?') a[j]='9';
+	repi(j,i+1,n) if(b[j]=='?') b[j]='0';
+	if(a>b) return TINF;
+	return mt(stoll(b)-stoll(a),a,b);
+}
+
+auto calc(string a,string b)
+{
+	int n=a.size();
+	auto res=TINF;
+	rep(i,n){
+		if(a[i]=='?' && b[i]=='?'){
+			a[i]='0',b[i]='1';
+			res=min(res,calc(a,b,i));
+			a[i]=b[i]='0';
+		}
+		else if(a[i]=='?'){
+			a[i]=max<char>(b[i]-1,'0');
+			res=min(res,calc(a,b,i));
+			a[i]=b[i];
+		}
+		else if(b[i]=='?'){
+			b[i]=min<char>(a[i]+1,'9');
+			res=min(res,calc(a,b,i));
+			b[i]=a[i];
+		}
+		else{
+			res=min(res,calc(a,b,i));
+		}
+		res=min(res,calc(a,b,i));
+	}
+	return res;
 }
 
 string Solver::solve()
 {
-	int n=a.size();
-	
-	vl amin(n),amax(n);
-	calc_min_max(a,amin,amax);
-	
-	vl bmin(n),bmax(n);
-	calc_min_max(b,bmin,bmax);
-	
-	vl ten(n,1);
-	rep(i,n-1) ten[i+1]=ten[i]*10;
-	
-	reverse(all(a)); reverse(all(b));
-	
-	ll dp[20][10][10]={};
-	memset(dp,0x7f,sizeof(dp));
-	tuple<ll,ll> scores[20][10][10];
-	
-	rep(i,10) if(a[0]=='?' || a[0]=='0'+i)
-		rep(j,10) if(b[0]=='?' || b[0]=='0'+j){
-			dp[0][i][j]=abs(i-j);
-			scores[0][i][j]=mt(i,j);
-		}
-	
-	rep(p,n-1){
-		rep(i,10) if(a[p]=='?' || a[p]=='0'+i){
-			rep(j,10) if(b[p]=='?' || b[p]=='0'+j){
-				rep(k,10) if(a[p+1]=='?' || a[p+1]=='0'+k){
-					rep(l,10) if(b[p+1]=='?' || b[p+1]=='0'+l){
-						ll& cur=dp[p+1][k][l];
-						if(k==l){
-							ll tmp=dp[p][i][j];
-							if(cur>tmp){
-								cur=tmp;
-								scores[p+1][k][l]=mt(
-									k*ten[p+1]+get<0>(scores[p][i][j]),
-									l*ten[p+1]+get<1>(scores[p][i][j])
-								);
-							}
-						}
-						else if(k<l){
-							ll tmp=(l*ten[p+1]+bmin[p])-(k*ten[p+1]+amax[p]);
-							if(cur>tmp){
-								cur=tmp;
-								scores[p+1][k][l]=mt(
-									k*ten[p+1]+amax[p],
-									l*ten[p+1]+bmin[p]
-								);
-							}
-						}
-						else if(k>l){
-							ll tmp=(k*ten[p+1]+amin[p])-(l*ten[p+1]+bmax[p]);
-							if(cur>tmp){
-								cur=tmp;
-								scores[p+1][k][l]=mt(
-									k*ten[p+1]+amin[p],
-									l*ten[p+1]+bmax[p]
-								);
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-	
-	ll mn=LLONG_MAX;
-	tuple<ll,ll> res;
-	rep(i,10) rep(j,10) if(mn>dp[n-1][i][j]){
-		mn=dp[n-1][i][j];
-		res=scores[n-1][i][j];
-	}
-	char buf[80];
-	sprintf(buf,"%0*lld %0*lld",n,get<0>(res),n,get<1>(res));
-	return buf;
+	auto res1=calc(a,b),res2=calc(b,a);
+	swap(get<1>(res2),get<2>(res2));
+	auto res=min(res1,res2);
+	return get<1>(res)+" "+get<2>(res);
 }
 
 int main()
@@ -158,7 +120,12 @@ int main()
 	rep(i,T) solvers[i].input();
 	
 	vector<string> results(T);
+	#ifndef _OPENMP
+	fputs("------- run with single thread -------\n",stderr);
+	#else
+	fprintf(stderr,"------- run with %d threads -------\n",omp_get_max_threads());
 	#pragma omp parallel for schedule(dynamic)
+	#endif
 	rep(i,T){
 		results[i]=solvers[i].solve();
 		fprintf(stderr,"#%d finish\n",i+1);
