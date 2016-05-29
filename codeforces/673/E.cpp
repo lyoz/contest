@@ -56,6 +56,39 @@ int main()
 	for(int n,m;cin>>n>>m&&n|m;){
 		vi ts(n);
 		rep(i,n) cin>>ts[i];
-		dump(ts);
+		
+		vd sum(n+1),rev(n+1),pre(n+1);
+		rep(i,n){
+			sum[i+1]=sum[i]+ts[i];
+			rev[i+1]=rev[i]+1./ts[i];
+			pre[i+1]=pre[i]+sum[i+1]/ts[i];
+		}
+		
+		vvd dp(m+1,vd(n+1,INFINITY));
+		dp[0][0]=0;
+		
+		rep(i,m){
+			deque<int> ks={i};
+			repi(j,i+1,n+1){
+				while(ks.size()>=2){
+					int k1=ks[ks.size()-2],k2=ks[ks.size()-1],k3=j;
+					double a1=-sum[k1],b1=dp[i][k1]-pre[k1]+sum[k1]*rev[k1];
+					double a2=-sum[k2],b2=dp[i][k2]-pre[k2]+sum[k2]*rev[k2];
+					double a3=-sum[k3],b3=dp[i][k3]-pre[k3]+sum[k3]*rev[k3];
+					if((a1-a2)*(b1-b3)>(b1-b2)*(a1-a3)) ks.pop_back();
+					else break;
+				}
+				ks.push_back(j);
+				
+				auto f=[&](int k){
+					return -sum[k]*rev[j]+dp[i][k]-pre[k]+sum[k]*rev[k];
+				};
+				
+				for(;ks.size()>=2 && f(ks[0])>f(ks[1]);)
+					ks.pop_front();
+				dp[i+1][j]=pre[j]+f(ks[0]);
+			}
+		}
+		printf("%.9f\n",dp[m][n]);
 	}
 }
