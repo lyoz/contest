@@ -54,58 +54,54 @@ constexpr double EPS=1e-9;
 struct UnionFind{
 	vi data;
 	UnionFind(int n):data(n,-1){}
-	int find(int i){
-		return data[i]<0?i:(data[i]=find(data[i]));
+	int Find(int i){
+		return data[i]<0?i:(data[i]=Find(data[i]));
 	}
-	bool unite(int a,int b){
-		a=find(a),b=find(b);
+	bool Unite(int a,int b){
+		a=Find(a),b=Find(b);
 		if(a==b) return false;
 		if(-data[a]<-data[b]) swap(a,b);
 		data[a]+=data[b];
 		data[b]=a;
 		return true;
 	}
-	int size(int i){
-		return -data[find(i)];
+	int Size(int i){
+		return -data[Find(i)];
 	}
 };
 
 int main()
 {
 	for(int n,m;cin>>n>>m && n|m;){
-		vector<tuple<int,int>> es;
+		vi us(m),vs(m);
 		rep(i,m){
-			int u,v; cin>>u>>v; u--,v--;
-			es.emplace_back(u,v);
+			cin>>us[i]>>vs[i];
+			us[i]--,vs[i]--;
 		}
 		int q; cin>>q;
-		vector<tuple<int,int,int>> qs;
+		vi xs(q),ys(q),zs(q);
 		rep(i,q){
-			int x,y,z; cin>>x>>y>>z; x--,y--;
-			qs.emplace_back(x,y,z);
+			cin>>xs[i]>>ys[i]>>zs[i];
+			xs[i]--,ys[i]--;
 		}
 
-		vector<int> ls(q),rs(q,m);
+		vi ls(q),rs(q,m);
 		while(ls<rs){
 			vi ms(q);
 			rep(i,q) ms[i]=(ls[i]+rs[i])/2;
 			vi is(q); iota(all(is),0);
 			sort(all(is),[&](int a,int b){return ms[a]<ms[b];});
-
 			UnionFind uf(n);
 			int j=0;
 			for(int i:is){
-				for(;j<=ms[i];j++)
-					uf.unite(get<0>(es[j]),get<1>(es[j]));
-				int x,y,z; tie(x,y,z)=qs[i];
-				int sz=uf.find(x)!=uf.find(y)?uf.size(x)+uf.size(y):uf.size(x);
-				if(sz>=z)
+				for(;j<=ms[i];j++) uf.Unite(us[j],vs[j]);
+				int size=uf.Find(xs[i])==uf.Find(ys[i])?uf.Size(xs[i]):uf.Size(xs[i])+uf.Size(ys[i]);
+				if(size>=zs[i])
 					rs[i]=ms[i];
 				else
 					ls[i]=ms[i]+1;
 			}
 		}
-
-		for(int x:ls) cout<<x+1<<endl;
+		rep(i,q) cout<<ls[i]+1<<endl;
 	}
 }

@@ -54,17 +54,13 @@ constexpr double EPS=1e-9;
 int main()
 {
 	for(int n,m;cin>>n>>m && n|m;){
-		vi xs(m),ys(m);
-		rep(i,m) cin>>xs[i]>>ys[i],xs[i]--,ys[i]--;
-
-		vi cs(n,1),ps(n); ps[0]=1;
-		rep(i,m){
-			int x=xs[i],y=ys[i];
-			cs[y]++;
-			if(ps[x]==1) ps[y]=1;
-			cs[x]--;
-			if(cs[x]==0) ps[x]=0;
+		vi cs(n,1),fs(n); fs[0]=1;
+		rep(_,m){
+			int x,y; cin>>x>>y; x--,y--;
+			fs[y]|=fs[x];
+			if(cs[x]==1) fs[x]=0;
+			cs[x]--; cs[y]++;
 		}
-		cout<<count(all(ps),1)<<endl;
+		cout<<count(all(fs),1)<<endl;
 	}
 }

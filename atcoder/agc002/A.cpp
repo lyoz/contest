@@ -54,13 +54,11 @@ constexpr double EPS=1e-9;
 int main()
 {
 	for(int a,b;cin>>a>>b;){
-		if(a<=0 && 0<=b)
-			cout<<"Zero"<<endl;
+		if(b<0)
+			cout<<((b-a+1)%2?"Negative":"Positive")<<endl;
 		else if(0<a)
 			cout<<"Positive"<<endl;
-		else{
-			int l=b-a+1;
-			cout<<(l&1?"Negative":"Positive")<<endl;
-		}
+		else
+			cout<<"Zero"<<endl;
 	}
 }
