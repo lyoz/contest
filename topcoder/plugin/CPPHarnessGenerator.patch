@@ -1,0 +1,35 @@
+--- CPPHarnessGenerator.java.orig	2013-08-11 11:16:29.000000000 +0900
++++ CPPHarnessGenerator.java	2016-12-30 02:06:27.026208000 +0900
+@@ -309,7 +309,6 @@
+         // Generate the output variable as the last variable
+         generateParameter(code, returnType, "expected__", output, isPlaceholder);
+ 
+-        code.add("");
+         code.add("         std::clock_t start__      = std::clock();");
+ 
+         // Generate the function call
+@@ -344,9 +343,21 @@
+                 code.add("      // custom cases");
+                 code.add("");
+             }
+-            code.add((i >= testCases.length ? "/*" : "") + "      case " + i + ": {");
+-            generateTestCase(code, i, testCases[i < testCases.length ? i : 0], i >= testCases.length);
+-            code.add("      }" + (i >= testCases.length ? "*/" : ""));
++            if (i >= testCases.length) {
++                code.add("      //case " + i + ": {");
++                int before = code.lines.size();
++                generateTestCase(code, i, testCases[0], true);
++                for(int j = before; j < code.lines.size(); j++) {
++                    String line = code.lines.get(j);
++                    code.lines.set(j, line.substring(0,6) + "//" + line.substring(6));
++                }
++                code.add("      //}");
++            }
++            else {
++                code.add("      case " + i + ": {");
++                generateTestCase(code, i, testCases[i], false);
++                code.add("      }");
++            }
+         }
+ 
+         // next
