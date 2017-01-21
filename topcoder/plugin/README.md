@@ -12,9 +12,20 @@ moj + CodeProcessor + FileEditを使う．
 $ sh build-jar.sh
 ```
 
-## 設定
-ContestAppletProd.jnlp 実行後のプラグインの設定．
-
+## アプレット(ContestAppletProd.jnlp)
+### アプレット設定
+1. ダウンロード
+   - https://www.topcoder.com/contest/arena/ContestAppletProd.jnlp
+2. 例外サイトへの追加
+   - コントロールパネル > Java
+     - [セキュリティ]タブの例外サイトリストに `http://www.topcoder.com` を追加する
+3. Options
+   - Disable Enter/Exit Messagesにチェック
+   - Enable Timestampsにチェック
+   - Setup User Preferences
+     - [Chat] Emphasis System: 色をcyan(0,255,255)にする
+     - フォントは適当に設定する(Meiryo UI + Inconsolata?)
+### プラグイン設定
 1. Options > EditorでEditor Preferenceを開く．
    - Common ClassPath: `FileEdit.jarとmoj.jarのファイルパス`
 2. [Add]
