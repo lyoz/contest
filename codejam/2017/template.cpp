@@ -71,6 +71,8 @@ int main()
 	int T; cin>>T;
 	vector<Solver> solvers(T);
 	rep(i,T) solvers[i].input();
+	fputs("------- input() finish -------\n",stderr);
+	fflush(stderr);
 	
 	vector<string> results(T);
 	#ifndef _OPENMP
@@ -82,6 +84,7 @@ int main()
 	rep(i,T){
 		results[i]=solvers[i].solve();
 		fprintf(stderr,"#%d finish\n",i+1);
+		fflush(stderr);
 	}
 	
 	rep(i,T) printf("Case #%d: %s\n",i+1,results[i].c_str());
