@@ -53,4 +53,8 @@ constexpr double EPS=1e-9;
 
 int main()
 {
+	#ifdef ONLINE_JUDGE
+	ios_base::sync_with_stdio(false);
+	cin.tie(nullptr);
+	#endif
 }
