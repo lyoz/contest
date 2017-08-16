@@ -1,7 +1,7 @@
 MAIN=
 
-#CXXFLAGS=-std=c++11 -Wall -Wextra -g -D_GLIBCXX_DEBUG
-CXXFLAGS=-std=c++11 -Wall -Wextra -O2
+CXXFLAGS=-std=c++11 -Wall -Wextra -Wno-sign-compare -g -D_GLIBCXX_DEBUG
+#CXXFLAGS=-std=c++11 -Wall -Wextra -Wno-sign-compare -O2
 
 all: $(MAIN)
 
