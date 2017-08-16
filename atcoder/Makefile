@@ -1,4 +1,4 @@
-MAIN=A
+MAIN=
 
 CXXFLAGS=-std=c++14 -Wall -Wextra -Wno-sign-compare -g -D_GLIBCXX_DEBUG
 #CXXFLAGS=-std=c++14 -Wall -Wextra -Wno-sign-compare -O2
