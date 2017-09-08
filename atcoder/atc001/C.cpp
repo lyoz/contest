@@ -61,7 +61,8 @@ constexpr double PI=acos(-1);
 using Complex=complex<double>;
 constexpr Complex I(0,1);
 
-void FFT(vector<Complex>& a,int sign){
+void FFT(vector<Complex>& a,bool inverse=false)
+{
 	int n=a.size();
 	for(int i=0;i<n;i++){
 		int j=0;
@@ -70,6 +71,7 @@ void FFT(vector<Complex>& a,int sign){
 		if(i<j)
 			swap(a[i],a[j]);
 	}
+	int sign=inverse?1:-1;
 	for(int m=2;m<=n;m*=2){
 		double theta=sign*2*PI/m;
 		for(int i=0;i<m/2;i++){
@@ -80,6 +82,111 @@ void FFT(vector<Complex>& a,int sign){
 			}
 		}
 	}
+	if(inverse)
+		for(int i=0;i<n;i++)
+			a[i]/=n;
+}
+
+template<unsigned M>
+struct modint{
+	unsigned val;
+	modint(unsigned x):val((x%M+M)%M){}
+	modint pow(unsigned r)const{
+		ll a=val,x=1;
+		for(;r;r>>=1){
+			if(r&1)
+				(x*=a)%=M;
+			(a*=a)%=M;
+		}
+		return x;
+	}
+	modint inv()const{
+		ll x=1;
+		for(ll a=val,b=M,u=0;b;){
+			ll t=a/b;
+			swap(a-=b*t,b);
+			swap(x-=u*t,u);
+		}
+		return (x+M)%M;
+	}
+	modint& operator=(const modint& x)&{val=x.val; return *this;}
+	modint& operator+=(const modint& x)&{if((val+=x.val)>=M) val-=M; return *this;}
+	modint& operator-=(const modint& x)&{if((val+=M-x.val)>=M) val-=M; return *this;}
+	modint& operator*=(const modint& x)&{val=(ll)val*x.val%M; return *this;}
+	modint& operator/=(const modint& x)&{val=(ll)val*x.inv().val%M; return *this;}
+};
+
+template<unsigned M> bool operator==(const modint<M>& a,const modint<M>& b){return a.val==b.val;}
+template<unsigned M> bool operator!=(const modint<M>& a,const modint<M>& b){return a.val!=b.val;}
+template<unsigned M> modint<M> operator+(modint<M> a,const modint<M>& b){a+=b; return a;}
+template<unsigned M> modint<M> operator-(modint<M> a,const modint<M>& b){a-=b; return a;}
+template<unsigned M> modint<M> operator*(modint<M> a,const modint<M>& b){a*=b; return a;}
+template<unsigned M> modint<M> operator/(modint<M> a,const modint<M>& b){a/=b; return a;}
+template<unsigned M> ostream& operator<<(ostream& os,const modint<M>& x){return os<<x.val;}
+
+template<unsigned M>
+void NTT(vector<modint<M>>& a,unsigned root,bool inverse=false){
+	int n=a.size();
+	for(int i=0;i<n;i++){
+		int j=0;
+		for(int k=0;(1<<k)<n;k++)
+			(j<<=1)|=i>>k&1;
+		if(i<j)
+			swap(a[i],a[j]);
+	}
+	for(int m=2;m<=n;m*=2){
+		modint<M> r=modint<M>(root).pow((M-1)/m);
+		for(int i=0;i<m/2;i++){
+			modint<M> wi=r.pow(i);
+			if(inverse) wi=wi.inv();
+			for(int j=0;j<n;j+=m){
+				modint<M> &x=a[i+j],&y=a[i+m/2+j];
+				tie(x,y)=mt(x+y*wi,x-y*wi);
+			}
+		}
+	}
+	if(inverse)
+		for(int i=0;i<n;i++)
+			a[i]/=n;
+}
+
+vi solve_by_fft(int n,vi a,vi b)
+{
+	int m=1;
+	for(;m<=2*n;m*=2);
+
+	vector<Complex> f(m),g(m),h(m);
+	rep(i,n+1) f[i]=a[i],g[i]=b[i];
+
+	FFT(f);
+	FFT(g);
+	rep(i,m) h[i]=f[i]*g[i];
+	FFT(h,true);
+
+	vi res;
+	repi(i,1,2*n+1)
+		res.push_back(real(h[i])+0.5);
+	return res;
+}
+
+vi solve_by_ntt(int n,vi a,vi b)
+{
+	int m=1;
+	for(;m<=2*n;m*=2);
+
+	constexpr unsigned mod=1224736769,root=3;
+	vector<modint<mod>> f(m,0),g(m,0),h(m,0);
+	rep(i,n+1) f[i]=a[i],g[i]=b[i];
+
+	NTT(f,root);
+	NTT(g,root);
+
+	rep(i,m) h[i]=f[i]*g[i];
+	NTT(h,root,true);
+
+	vi res;
+	repi(i,1,2*n+1) res.push_back(h[i].val);
+	return res;
 }
 
 int main()
@@ -94,20 +201,9 @@ int main()
 		vi a(n+1),b(n+1);
 		rep(i,n) cin>>a[i+1]>>b[i+1];
 
-		int m=1;
-		for(;m<=2*n;m*=2);
-
-		vector<Complex> f(m),g(m),h(m);
-		rep(i,n+1) f[i]=a[i],g[i]=b[i];
-
-		FFT(f,-1);
-		FFT(g,-1);
-		rep(i,m)
-			h[i]=f[i]*g[i];
-		FFT(h,1);
-		rep(i,m) h[i]/=m;
-
-		repi(i,1,2*n+1)
-			cout<<int(real(h[i])+0.5)<<endl;
+		for(int x:solve_by_fft(n,a,b))
+			cout<<x<<endl;
+		//for(int x:solve_by_ntt(n,a,b))
+		//	cout<<x<<endl;
 	}
 }
