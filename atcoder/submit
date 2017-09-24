@@ -52,8 +52,8 @@ def submit(file):
     }
 
     print('submit...',end='',flush=True)
-    res=requests.post(url,cookies=cookies,data=data)
-    print(f'finish.')
+    requests.post(url,cookies=cookies,data=data)
+    print('finish.')
 
 
 submit()
