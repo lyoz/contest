@@ -3,8 +3,10 @@
 import os.path
 import pickle
 import sys
+import click
 import lxml.html
 import requests
+
 
 # ======================================================================
 contest='abc001'
@@ -18,35 +20,40 @@ lang_ids={
 }
 # ======================================================================
 
-if len(sys.argv)!=2:
-    print('Usage: python submit.py FILE')
-    raise SystemExit
 
-submit_file=sys.argv[1]
-with open(submit_file) as f:
-    source_code=f.read()
+@click.command()
+@click.argument('file',type=click.Path(exists=True))
+def submit(file):
+    click.confirm(f'Do you want to submit {file} to {contest}?',abort=True)
 
-with open(cookie_pkl,'rb') as f:
-    cookies=pickle.load(f)
+    file=sys.argv[1]
+    with open(file) as f:
+        source_code=f.read()
 
-url=f'https://beta.atcoder.jp/contests/{contest}/submit'
-res=requests.get(url,cookies=cookies)
+    with open(cookie_pkl,'rb') as f:
+        cookies=pickle.load(f)
 
-dom=lxml.html.fromstring(res.text)
-task_ids={e.text[0]:e.attrib['value'] for e in dom.xpath('//select[@id="select-task"]/option')}
-csrf_token=dom.xpath(f'//form[@action="/contests/{contest}/submit"]/input[@name="csrf_token"]/@value')[0]
+    url=f'https://beta.atcoder.jp/contests/{contest}/submit'
+    res=requests.get(url,cookies=cookies)
 
-pre,ext=os.path.splitext(submit_file)
-task_id=task_ids[pre[0]]
-lang_id=lang_ids[ext[1:]]
+    dom=lxml.html.fromstring(res.text)
+    task_ids={e.text[0]:e.attrib['value'] for e in dom.xpath('//select[@id="select-task"]/option')}
+    csrf_token=dom.xpath(f'//form[@action="/contests/{contest}/submit"]/input[@name="csrf_token"]/@value')[0]
 
-data={
-    'data.TaskScreenName':task_id,
-    'data.LanguageId':lang_id,
-    'sourceCode':source_code,
-    'csrf_token':csrf_token,
-}
+    pre,ext=os.path.splitext(file)
+    task_id=task_ids[pre[0]]
+    lang_id=lang_ids[ext[1:]]
 
-print('submit...',end='',flush=True)
-res=requests.post(url,cookies=cookies,data=data)
-print(f'finish.')
+    data={
+        'data.TaskScreenName':task_id,
+        'data.LanguageId':lang_id,
+        'sourceCode':source_code,
+        'csrf_token':csrf_token,
+    }
+
+    print('submit...',end='',flush=True)
+    res=requests.post(url,cookies=cookies,data=data)
+    print(f'finish.')
+
+
+submit()
