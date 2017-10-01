@@ -27,7 +27,7 @@ def submit(file):
     click.confirm(f'Do you want to submit {file} to {contest}?',abort=True)
 
     file=sys.argv[1]
-    with open(file) as f:
+    with open(file,encoding='utf-8') as f:
         source_code=f.read()
 
     with open(cookie_pkl,'rb') as f:
