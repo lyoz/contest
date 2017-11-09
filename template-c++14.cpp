@@ -21,6 +21,9 @@ using vd=vector<double>;
 using vvd=vector<vd>;
 using vs=vector<string>;
 
+template<typename T,typename U>bool chmin(T& a,const U& b){return a>b?(a=b,1):0;}
+template<typename T,typename U>bool chmax(T& a,const U& b){return a<b?(a=b,1):0;}
+
 void print_vars(ostream&){}
 template<typename Car,typename... Cdr>
 void print_vars(ostream& os,const Car& car,const Cdr&... cdr){
