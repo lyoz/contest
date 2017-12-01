@@ -20,6 +20,9 @@ using vd=vector<double>;
 using vvd=vector<vd>;
 using vs=vector<string>;
 
+template<typename T,typename U>bool chmin(T& a,const U& b){return a>b?(a=b,1):0;}
+template<typename T,typename U>bool chmax(T& a,const U& b){return a<b?(a=b,1):0;}
+
 $BEGINCUT$
 #define dump(...) do{print_vars(cout<<"# "<<#__VA_ARGS__<<'=',__VA_ARGS__);cout<<endl;}while(0)
 void print_vars(ostream&){}

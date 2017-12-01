@@ -9,7 +9,7 @@ moj + CodeProcessor + FileEditを使う．
 ローカルでのカスタムテストの出力形式を修正して使う．
 
 ```
-$ sh build-jar.sh
+$ ./build-jar
 ```
 
 ## アプレット(ContestAppletProd.jnlp)
@@ -20,11 +20,12 @@ $ sh build-jar.sh
    - コントロールパネル > Java
      - [セキュリティ]タブの例外サイトリストに `http://www.topcoder.com` を追加する
 3. Options
-   - Disable Enter/Exit Messagesにチェック
-   - Enable Timestampsにチェック
+   - ☑ Disable Enter/Exit Messages
+   - ☑ Enable Timestamps
    - Setup User Preferences
-     - [Chat] Emphasis System: 色をcyan(0,255,255)にする
-     - フォントは適当に設定する(Meiryo UI + Inconsolata?)
+     - Chat > Emphasis System - Foreground
+       - 色を(0,255,255)にする
+     - フォントは適当に設定する(Meiryo UI 14pt + Inconsolata 16pt?)
 ### プラグイン設定
 1. Options > EditorでEditor Preferenceを開く．
    - Common ClassPath: `FileEdit.jarとmoj.jarのファイルパス`
@@ -37,7 +38,7 @@ $ sh build-jar.sh
    - Editor EntryPoint: `fileedit.EntryPoint`
      - [Configure]
        - Enter directory to read/write problems to: `ソースコードが生成されるディレクトリ`
-       - Backup existing file then overwrite (uncheck if you want to keep existing file)のチェックを外す
+       - ☐ Backup existing file then overwrite (uncheck if you want to keep existing file)
        - Code Templateタブに切り替え，C++のテンプレートを編集して[Save]
    - CodeProcessor Script
      - [Add]
