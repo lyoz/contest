@@ -1,7 +1,14 @@
 MAIN=A
+DEBUG=1
 
-CXXFLAGS=-std=c++14 -Wall -Wextra -Wno-sign-compare -g -D_GLIBCXX_DEBUG
-#CXXFLAGS=-std=c++14 -Wall -Wextra -Wno-sign-compare -O2
+ifneq ($(DEBUG),)
+CXXFLAGS=-std=c++17 -Wall -Wextra -Wno-sign-compare -g -D_GLIBCXX_DEBUG
+ifeq ($(shell uname),Linux)
+CXXFLAGS+=-fsanitize=address
+endif
+else
+CXXFLAGS=-std=c++17 -Wall -Wextra -Wno-sign-compare -O2
+endif
 
 all: $(MAIN)
 
