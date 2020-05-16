@@ -15,5 +15,10 @@ all: $(MAIN)
 clean:
 	/usr/bin/find . -maxdepth 1 -type f -perm -111 -delete
 	rm -f *.stackdump
+
 run: $(MAIN)
 	./$(MAIN) < $(MAIN).in
+
+# for interactive problem
+#run: $(MAIN)
+#	python interactive_runner.py python testing_tool.py 0 -- ./$(MAIN)
