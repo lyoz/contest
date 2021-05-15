@@ -7,7 +7,7 @@ ifeq ($(shell uname),Linux)
 CXXFLAGS+=-fsanitize=address
 endif
 else
-CXXFLAGS=-std=c++14 -Wall -Wextra -Wno-sign-compare -O2
+CXXFLAGS=-std=c++17 -Wall -Wextra -Wno-sign-compare -O2
 endif
 
 all: $(MAIN)
@@ -20,5 +20,5 @@ run: $(MAIN)
 	./$(MAIN) < $(MAIN).in
 
 # for interactive problem
-#run: $(MAIN)
-#	python interactive_runner.py python testing_tool.py 0 -- ./$(MAIN)
+# run: $(MAIN)
+# 	python interactive_runner.py python local_testing_tool.py 0 -- ./$(MAIN)
