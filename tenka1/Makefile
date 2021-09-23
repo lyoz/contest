@@ -1,4 +1,4 @@
-MAIN=
+MAIN=marisa
 DEBUG=1
 
 ifneq ($(DEBUG),)
@@ -17,4 +17,10 @@ clean:
 	rm -f *.stackdump
 
 run: $(MAIN)
-	./$(MAIN) < $(MAIN).in
+	./$(MAIN)
+
+dev: $(MAIN)
+	GAME_SERVER=https://contest.2021-autumn.gbc.tenka1.klab.jp/staging python call_api.py ./$(MAIN)
+
+prod: $(MAIN)
+	GAME_SERVER=https://contest.2021-autumn.gbc.tenka1.klab.jp python call_api.py ./$(MAIN)
