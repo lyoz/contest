@@ -2,10 +2,8 @@ MAIN=
 DEBUG=1
 
 ifneq ($(DEBUG),)
-CXXFLAGS=-std=c++17 -Wall -Wextra -Wno-sign-compare -g -D_GLIBCXX_DEBUG
-ifeq ($(shell uname),Linux)
-CXXFLAGS+=-fsanitize=address
-endif
+CPPFLAGS=-D_GLIBCXX_DEBUG
+CXXFLAGS=-std=c++17 -Wall -Wextra -Wno-sign-compare -g -fsanitize=address,undefined
 else
 CXXFLAGS=-std=c++17 -Wall -Wextra -Wno-sign-compare -O2
 endif
