@@ -1,1 +1,1 @@
-問題セットのURL: `http://codeforces.com/contest/<dirname>`
+問題セットのURL: `https://codeforces.com/contest/<dirname>`
