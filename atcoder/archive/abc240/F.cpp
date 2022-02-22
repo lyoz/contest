@@ -60,6 +60,17 @@ constexpr int INF=1e9;
 constexpr int MOD=1e9+7;
 constexpr double EPS=1e-9;
 
+ll clamp(ll x,ll a,ll b)
+{
+	return min(max(x,a),b);
+}
+
+// a+(a+d)+...+(a+(n-1)d)
+ll getsum(ll a,ll d,ll n)
+{
+	return a*n+d*(n-1)*n/2;
+}
+
 int main()
 {
 	#ifndef _GLIBCXX_DEBUG
@@ -68,49 +79,28 @@ int main()
 	constexpr char endl='\n';
 	#endif
 
-	for(int tc;cin>>tc&&tc;){
-		rep(_,tc){
-			int n,m; cin>>n>>m;
-			vl xs(n),ys(n);
-			rep(i,n) cin>>xs[i]>>ys[i];
+		int tc; cin>>tc;
+	rep(_,tc){
+		int n,m; cin>>n>>m;
+		vl xs(n),ys(n);
+		rep(i,n) cin>>xs[i]>>ys[i];
 
-			vl is={-1},bs={0};
-			rep(i,n){
-				ll iback=is.back(),bback=bs.back();
-				if(xs[i]<0){
-					// xs[i]を何回足したら負になるか
-					int lo=0,hi=ys[i]+1;
-					while(lo<hi){
-						int mi=(lo+hi)/2;
-						ll z=bs.back()+xs[i]*mi;
-						if(z<0)
-							hi=mi;
-						else
-							lo=mi+1;
-					}
-					if(1<lo&&lo<=ys[i]){
-						is.push_back(iback+(lo-1));
-						bs.push_back(iback+(lo-1)*xs[i]);
-					}
-				}
-				is.push_back(iback+ys[i]);
-				bs.push_back(bback+ys[i]*xs[i]);
+		ll asum=0,bsum=0,res=xs[0];
+		rep(i,n){
+			if(xs[i]<0){
+				// p: xs[i]を何回足すか, 1≦p≦ys[i] (p==0は直前のループの結果なので考えなくていい)
+				// bsum+xs[i]*p≥0, bsum+xs[i]*(p+1)<0となるような点を探す
+				// p≤bsum/(-xs[i])
+				ll p=bsum/(-xs[i]);
+				p=clamp(p,1,ys[i]);
+				ll sum=asum+getsum(bsum+xs[i],xs[i],p);
+				chmax(res,sum);
 			}
-
-			ll res=xs[0],asum=0,bsum=0;
-			for(int i=0,j=1,k=0;j<is.size();j++){
-				for(;k<n;k++){
-					if(i<=is[j]&&is[j]<i+ys[k])
-						break;
-          i+=ys[k];
-					asum+=bsum*ys[k]+xs[k]*ys[k]*(ys[k]+1)/2;
-					bsum+=xs[k]*ys[k];
-				}
-				ll cnt=is[j]-i+1;
-				ll add=bsum*cnt+xs[k]*cnt*(cnt+1)/2;
-				chmax(res,asum+add);
-			}
-			cout<<res<<endl;
+			asum+=bsum*ys[i];
+			asum+=xs[i]*ys[i]*(ys[i]+1)/2;
+			bsum+=xs[i]*ys[i];
+			chmax(res,asum);
 		}
+		cout<<res<<endl;
 	}
 }
