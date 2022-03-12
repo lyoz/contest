@@ -15,11 +15,15 @@ using ll=long long;
 using ull=unsigned long long;
 using vi=vector<int>;
 using vvi=vector<vi>;
+using vvvi=vector<vvi>;
 using vl=vector<ll>;
 using vvl=vector<vl>;
+using vvvl=vector<vvl>;
 using vd=vector<double>;
 using vvd=vector<vd>;
+using vvvd=vector<vvd>;
 using vs=vector<string>;
+using vvs=vector<vs>;
 
 template<typename T,typename U>bool chmin(T& a,const U& b){return a>b?(a=b,1):0;}
 template<typename T,typename U>bool chmax(T& a,const U& b){return a<b?(a=b,1):0;}
