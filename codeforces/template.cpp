@@ -1,1 +1,1 @@
-../template-c++14.cpp
+../template-c++17.cpp
